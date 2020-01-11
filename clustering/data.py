@@ -1,10 +1,11 @@
 import numpy as np
 import json
+import os
 
 
 DEFAULT_SETTING = None
 
-with open('setting.json', 'r') as setting:
+with open(os.path.dirname(os.path.realpath(__file__)) + '/setting.json', 'r') as setting:
     DEFAULT_SETTING = json.load(setting)['DEFAULT_SETTING']
 
 if DEFAULT_SETTING is None:
@@ -27,7 +28,8 @@ class Data:
             sigma   = sigma,
         )
 
-    def __generate(self):
+    def __generate(self,
+                   ):
         self.__x = np.random.normal(self.__mu, self.__sigma, self.__num)
         self.__y = np.random.normal(self.__mu, self.__sigma, self.__num)
 
@@ -43,7 +45,8 @@ class Data:
         self.__y      = []
         self.__generate()
 
-    def get(self):
+    def get(self,
+            ):
         return {
             'x': self.__x,
             'y': self.__y,
