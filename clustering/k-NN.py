@@ -17,11 +17,15 @@ class Knn:
     def normalize(self,
                   ):
         # max and min value
-        max = {}
-        min = {}
-        for i in ('x', 'y'):
-            max[i] = reduce((lambda x, y: np.amax(x[i] + y[i])), self.__training_sample)
-            min[i] = reduce((lambda x, y: np.amin(x[i] + y[i])), self.__training_sample)
+        max, min = {}, {}
+        for d in ('x', 'y'):
+            max[d] = []
+            min[d] = []
+            for i in self.__training_sample:
+                max[d].append(np.amax(i[d]))
+                min[d].append(np.amin(i[d]))
+            max[d] = np.amax(max[d])
+            min[d] = np.amin(min[d])
 
         # normalize
         self.__training_sample_n = []
@@ -53,9 +57,9 @@ class Knn:
 
 if __name__ == '__main__':
     # get data
-    num_of_class = 2
+    num_of_class = 5
     data = []
-    for i in range(0, 2):
+    for i in range(0, num_of_class):
         data.append(Data.Data(600, sigma=1, mu=((i+1)*2)).get())
 
 
