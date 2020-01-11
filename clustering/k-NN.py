@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from functools import reduce
 
 import data as Data
 import metrics
+
 
 class Knn:
     def __init__(self,
@@ -10,22 +12,23 @@ class Knn:
                  ):
         self.__training_sample   = training_sample
         self.__training_sample_n = []
+        self.__n                 = len(training_sample)
 
     def normalize(self,
                   ):
         # max and min value
-        max_x = np.amax(data[0]['x'] + data[1]['x'])
-        max_y = np.amax(data[0]['y'] + data[1]['y'])
-        min_x = np.amin(data[0]['x'] + data[1]['x'])
-        min_y = np.amin(data[0]['y'] + data[1]['y'])
+        max = {}
+        min = {}
+        for i in ('x', 'y'):
+            max[i] = reduce((lambda x, y: np.amax(x[i] + y[i])), self.__training_sample)
+            min[i] = reduce((lambda x, y: np.amin(x[i] + y[i])), self.__training_sample)
 
         # normalize
         self.__training_sample_n = []
-        for i in (0, 1):
-            self.__training_sample_n.append({
-                'x': [(x - min_x) / (max_x - min_x) for x in data[i]['x']],
-                'y': [(y - min_y) / (max_y - min_y) for y in data[i]['y']],
-            })
+        for i in range(0, self.__n):
+            self.__training_sample_n.append({})
+            for d in ('x', 'y'):
+                self.__training_sample_n[-1][d] = [(x - min[d]) / (max[d] - min[d]) for x in self.__training_sample[i][d]]
 
     def drow_training_sample(self,
                              ):
@@ -44,15 +47,16 @@ class Knn:
         plt.xlabel("x", fontsize=10)
         plt.ylabel("y", fontsize=10)
 
-        plt.scatter(data[0]['x'], data[0]['y'], s=5)
-        plt.scatter(data[1]['x'], data[1]['y'], s=5)
+        for i in range(0, self.__n):
+            plt.scatter(data[i]['x'], data[i]['y'], s=5)
 
 
 if __name__ == '__main__':
     # get data
+    num_of_class = 2
     data = []
-    for mu in (0, 2):
-        data.append(Data.Data(600, sigma=1, mu=mu).get())
+    for i in range(0, 2):
+        data.append(Data.Data(600, sigma=1, mu=((i+1)*2)).get())
 
 
     knn = Knn(data)
