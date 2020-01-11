@@ -1,0 +1,8 @@
+{
+    "DEFAULT_SETTING": {
+        "NORMAL_DISTRIBUTION": {
+            "mu": 0,
+            "sigma": 1
+        }
+    }
+}
