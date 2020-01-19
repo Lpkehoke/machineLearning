@@ -4,43 +4,56 @@ from functools import reduce
 
 import data as Data
 import metrics
+import weight
 
 
 class Knn:
     def __init__(self,
                  training_sample,
                  ):
-        self.__training_sample   = training_sample
-        self.__training_sample_n = []
-        self.__n                 = len(training_sample)
+        self.__training_sample      = training_sample
+        self.__norm_training_sample = []
+        self.__n                    = len(training_sample)
 
-    def normalize(self,
-                  ):
+    def normalize_training_sample(self,
+                                  ):
         # max and min value
-        max, min = {}, {}
+        self.__max, self.__min = {}, {}
         for d in ('x', 'y'):
-            max[d] = []
-            min[d] = []
+            self.__max[d] = []
+            self.__min[d] = []
             for i in self.__training_sample:
-                max[d].append(np.amax(i[d]))
-                min[d].append(np.amin(i[d]))
-            max[d] = np.amax(max[d])
-            min[d] = np.amin(min[d])
+                self.__max[d].append(np.amax(i[d]))
+                self.__min[d].append(np.amin(i[d]))
+            self.__max[d] = np.amax(self.__max[d])
+            self.__min[d] = np.amin(self.__min[d])
 
-        # normalize
-        self.__training_sample_n = []
+        # normalize_training_sample
+        self.__norm_training_sample = []
         for i in range(0, self.__n):
-            self.__training_sample_n.append({})
+            self.__norm_training_sample.append({})
             for d in ('x', 'y'):
-                self.__training_sample_n[-1][d] = [(x - min[d]) / (max[d] - min[d]) for x in self.__training_sample[i][d]]
+                self.__norm_training_sample[-1][d] = [(p - self.__min[d]) / (self.__max[d] - self.__min[d]) for p in self.__training_sample[i][d]]
+
+    def normalize_point(self,
+                        point,
+                        ):
+        if not self.__min or not self.__max:
+            raise "first call normalize_training_sample"
+
+        norm_point = {}
+        for d in ('x', 'y'):
+            norm_point[d] = (point[d] - self.__min[d]) / (self.__max[d] - self.__min[d])
+
+        return norm_point
 
     def drow_training_sample(self,
                              ):
         self.__drow(self.__training_sample, figure = 0)
 
     def drow_training_sample_n(self,
-                             ):
-        self.__drow(self.__training_sample_n, figure = 1)
+                               ):
+        self.__drow(self.__norm_training_sample, figure = 1)
 
     def __drow(self,
                data,
@@ -57,15 +70,21 @@ class Knn:
 
 if __name__ == '__main__':
     # get data
-    num_of_class = 5
+    num_of_class  = 5
+    num_of_points = 600
+
     data = []
     for i in range(0, num_of_class):
-        data.append(Data.Data(600, sigma=1, mu=((i+1)*2)).get())
-
+        data.append(Data.Data(num_of_points, sigma=1, mu=((i+1)*2)).get())
 
     knn = Knn(data)
-    knn.normalize()
+    knn.normalize_training_sample()
     knn.drow_training_sample()
     knn.drow_training_sample_n()
+
+    print(knn.normalize_point({
+        'x': 1,
+        'y': 2,
+    }))
 
     plt.show()
