@@ -1,3 +1,6 @@
+Install requirements:
+`$ ./init.sh`
+
 KNN algorithm:
 To start:
-`$ python3 clustering/k-NN.py`
+`$ ./start_knn.sh`

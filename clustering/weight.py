@@ -10,25 +10,25 @@ class Weight:
         self.__n                     = len(training_sample)
 
     def first_neighbor(self,
-                       point=None,
                        i,
+                       point=None,
                        ):
         return self.k_neighbor(point=point, i=i, k=1)
 
     def k_neighbor(self,
-                   point=None,
                    i,
                    k,
+                   point=None,
                    ):
         return self.k_neighbor_exp_weight(point=point, i=i, k=k, q=1)
 
     def k_neighbor_exp_weight(self,
-                              point=None,
                               i,
                               k,
                               q,
+                              point=None,
                               ):
         if i >= k:
             return 0
-        else
+        else:
             return q ** i

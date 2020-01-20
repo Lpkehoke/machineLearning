@@ -82,9 +82,4 @@ if __name__ == '__main__':
     knn.drow_training_sample()
     knn.drow_training_sample_n()
 
-    print(knn.normalize_point({
-        'x': 1,
-        'y': 2,
-    }))
-
     plt.show()
